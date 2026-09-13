@@ -6,6 +6,7 @@ import {
 } from '@farcaster/miniapp-core'
 import { createBack } from './back.ts'
 import { ethereumProvider, getEthereumProvider } from './ethereumProvider.ts'
+import { isMessageDataOfType } from './message.ts'
 import { miniAppHost } from './miniAppHost.ts'
 import { quickAuth } from './quickAuth.ts'
 import { emitter } from './sdkEmitter.ts'
@@ -193,7 +194,7 @@ if (typeof window !== 'undefined') {
   // web events
   window.addEventListener('message', (event) => {
     if (event instanceof MessageEvent) {
-      if (event.data.type === 'frameEvent') {
+      if (isMessageDataOfType(event.data, 'frameEvent')) {
         const miniAppEvent = event.data.event as MiniAppClientEvent
         if (miniAppEvent.event === 'primary_button_clicked') {
           emitter.emit('primaryButtonClicked')

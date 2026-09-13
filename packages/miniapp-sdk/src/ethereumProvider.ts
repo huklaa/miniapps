@@ -12,6 +12,7 @@ import type {
 import * as Provider from 'ox/Provider'
 import * as RpcRequest from 'ox/RpcRequest'
 import * as RpcResponse from 'ox/RpcResponse'
+import { isMessageDataOfType } from './message.ts'
 import { miniAppHost } from './miniAppHost.ts'
 
 const emitter = Provider.createEmitter()
@@ -161,8 +162,8 @@ if (typeof window !== 'undefined') {
   // web events
   window.addEventListener('message', (event) => {
     if (event instanceof MessageEvent) {
-      if (event.data.type === 'frameEthProviderEvent') {
-        const ethProviderEvent = event.data as EthProviderWireEvent
+      if (isMessageDataOfType(event.data, 'frameEthProviderEvent')) {
+        const ethProviderEvent = event.data as unknown as EthProviderWireEvent
         // @ts-expect-error
         emitter.emit(ethProviderEvent.event, ...ethProviderEvent.params)
       }
@@ -171,7 +172,7 @@ if (typeof window !== 'undefined') {
 
   window.addEventListener('message', (event) => {
     if (event instanceof MessageEvent) {
-      if (event.data.type === 'frameEvent') {
+      if (isMessageDataOfType(event.data, 'frameEvent')) {
         const miniAppEvent = event.data.event as MiniAppClientEvent
         if (miniAppEvent.event === 'eip6963:announceProvider') {
           announceEvmProvider({
